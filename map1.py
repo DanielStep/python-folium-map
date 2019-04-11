@@ -27,8 +27,12 @@ def colour_producer(el):
 fg = folium.FeatureGroup(name="My Map")
 
 for v in get_volcanoes():
-    fg.add_child(folium.CircleMarker(location=[v["Lat"], v["Lon"]], radius=6,
-                                     popup=str(v["Elev"]), icon=folium.Icon(color=v["Colour"])))
+    fg.add_child(folium.CircleMarker(location=[v["Lat"], v["Lon"]],
+                                     radius=6,
+                                     popup=str(v["Elev"])+"m",
+                                     fill_color=v["Colour"],
+                                     color="grey",
+                                     fill_opacity=0.7))
 
 map = folium.Map(location=[-37.819783, 144.957530], zoom_start=6,
                  tiles="Mapbox Bright")
