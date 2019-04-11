@@ -1,30 +1,37 @@
 import folium
+import pandas
 
 
-def add_markers(coord):
-    global fg
-    fg.add_child(folium.Marker(location=coord["loc"], popup=coord["name"]
-                               , icon=folium.Icon(color="green")))
+def get_volcanoes():
+    data = pandas.read_csv("volcanoes.txt")
+    volcanoes = []
+    for lt, ln, el in zip(list(data["LAT"]), list(data["LON"]), list(data["ELEV"])):
+        volcanoes.append({
+            "Lat": lt,
+            "Lon": ln,
+            "Elev": el,
+            "Colour": colour_producer(el)
+        })
+    return volcanoes
 
 
-map = folium.Map(location=[-37.819783, 144.957530], zoom_start=6,
-                 tiles="Mapbox Bright")
+def colour_producer(el):
+    if el < 1000:
+        return "green"
+    elif 1000 <= el < 3000:
+        return "orange"
+    else:
+        return "red"
+
 
 fg = folium.FeatureGroup(name="My Map")
 
-coords = [
-    {
-        "loc": [-37.815737, 144.957790],
-        "name": "Work"
-    },
-    {
-        "loc": [-37.886362, 145.083086],
-        "name": "Home"
-    }
-]
+for v in get_volcanoes():
+    fg.add_child(folium.CircleMarker(location=[v["Lat"], v["Lon"]], radius=6,
+                                     popup=str(v["Elev"]), icon=folium.Icon(color=v["Colour"])))
 
-for coord in coords:
-    add_markers(coord)
+map = folium.Map(location=[-37.819783, 144.957530], zoom_start=6,
+                 tiles="Mapbox Bright")
 
 map.add_child(fg)
 map.save("Map1.html")
