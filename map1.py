@@ -1,6 +1,8 @@
 import folium
 import pandas
 
+def get_countries():
+    return open('world.json', 'r', encoding='utf-8-sig').read()
 
 def get_volcanoes():
     data = pandas.read_csv("volcanoes.txt")
@@ -29,10 +31,12 @@ fg = folium.FeatureGroup(name="My Map")
 for v in get_volcanoes():
     fg.add_child(folium.CircleMarker(location=[v["Lat"], v["Lon"]],
                                      radius=6,
-                                     popup=str(v["Elev"])+"m",
+                                     popup=str(v["Elev"]) + "m",
                                      fill_color=v["Colour"],
                                      color="grey",
                                      fill_opacity=0.7))
+
+fg.add_child(folium.GeoJson(data=(get_countries())))
 
 map = folium.Map(location=[-37.819783, 144.957530], zoom_start=6,
                  tiles="Mapbox Bright")
